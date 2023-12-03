@@ -11,7 +11,6 @@ fn setup(day: i32) -> String {
 
 fn main() {
     let days: Vec<&dyn Fn(&String) -> ()> = vec![&day1::day1, &day2::day2];
-    let contents = setup(1);
     let mut day = 1;
     for f in &days {
         println!("\nDay {day} result:\n");
@@ -19,5 +18,4 @@ fn main() {
         (f)(&contents_j);
         day += 1;
     }
-    days[0](&contents);
 }
