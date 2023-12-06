@@ -1,26 +1,7 @@
-// Idea:
-// for each map,
-//   make vec(start, end, offset)
-// end for
-// min_loc, min_seed = +infty, 0
-// for each seed
-//   curr_val = seed
-//   for each map
-//      look through map until curr_val is either between (start, end) or between prev start and next end
-//      if in (start, end)
-//        curr_val += offset
-//      end if
-//   end for
-//   if curr_val < min_loc
-//      min_loc = curr_val
-//      min_seed = seed
-//   end if
-// end for
-// return min_loc
-
 use core::i64::MAX;
-use std::cmp::min;
+use std::{cmp::min, time::Instant};
 use regex::Regex;
+use indicatif::ProgressBar;
 
 fn make_map(map_str: &str)->Vec<(i64, i64, i64)> {
     let mut mymap = Vec::new();
@@ -82,35 +63,29 @@ pub fn day5(contents: &String) {
     }
     let min_loc = find_min_location(&seeds, &maps);
     println!("Part 1: {min_loc}");
-    // print!("Seeds: (");
-    // for seed in seeds {
-    //     print!("{seed}, ");
-    // }
-    // print!(")\nMaps:\n");
-    // for (j, map) in maps.iter().enumerate() {
-    //     print!("{j}: ");
-    //     for t in map {
-    //         print!("({},{},{}), ", t.0, t.1, t.2);
-    //     }
-    //     print!("\n");
-    // }
+
     seeds.clear();
     let re = Regex::new(r"([0-9]+) ([0-9]+)").unwrap();
-    // let seed_str = contents.rsplit_once('\n').unwrap().0;//.rsplit_once(": ").unwrap().1;
     let mut min_dest = MAX;
+    let mut seed_vec = Vec::new();
+    let mut total = 0;
     for c in re.captures_iter(seed_str) {
-        println!("start extract");
         let (_, [seed_start_str, range_str]) = c.extract();
-        println!("end extract");
         let seed_start = seed_start_str.parse::<i64>().unwrap();
-        println!("end parse start");
         let range = range_str.parse::<i64>().unwrap();
-        println!("end parse range");
+        seed_vec.push((seed_start, range));
+        total += range as u64;
+    }
+    let bar = ProgressBar::new(total);
+    let start = Instant::now();
+    for (seed_start, range) in seed_vec {
         for seed in seed_start..(seed_start+range) {
-            println!("{} {}", seed, seed_start+range);
             let dest = find_dest(seed, &maps);
             min_dest = min(min_dest, dest);
+            bar.inc(1);
         }
     }
-    println!("Part 2: {min_dest}");
+    let elap = start.elapsed();
+
+    println!("Part 2: {min_dest}, {}s", elap.as_secs());
 }
