@@ -2,6 +2,7 @@ use core::i64::MAX;
 use std::{cmp::min, time::Instant};
 use regex::Regex;
 use indicatif::ProgressBar;
+use rayon::prelude::*;
 
 fn make_map(map_str: &str)->Vec<(i64, i64, i64)> {
     let mut mymap = Vec::new();
@@ -68,22 +69,20 @@ pub fn day5(contents: &String) {
     let re = Regex::new(r"([0-9]+) ([0-9]+)").unwrap();
     let mut min_dest = MAX;
     let mut seed_vec = Vec::new();
-    let mut total = 0;
     for c in re.captures_iter(seed_str) {
         let (_, [seed_start_str, range_str]) = c.extract();
         let seed_start = seed_start_str.parse::<i64>().unwrap();
         let range = range_str.parse::<i64>().unwrap();
         seed_vec.push((seed_start, range));
-        total += range as u64;
     }
-    let bar = ProgressBar::new(total);
+    
+    let bar = ProgressBar::new(seed_vec.len() as u64);
     let start = Instant::now();
     for (seed_start, range) in seed_vec {
-        for seed in seed_start..(seed_start+range) {
-            let dest = find_dest(seed, &maps);
-            min_dest = min(min_dest, dest);
-            bar.inc(1);
-        }
+        let range_min = (seed_start..(seed_start+range)).into_par_iter()
+            .map( |seed| find_dest(seed, &maps)).min().unwrap();
+        min_dest = min(min_dest, range_min);
+        bar.inc(1);
     }
     let elap = start.elapsed();
 
