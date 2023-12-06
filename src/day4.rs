@@ -1,5 +1,4 @@
-use std::collections::{VecDeque};
-use std::cmp;
+use std::collections::VecDeque;
 
 #[derive(Copy, Clone)]
 struct Card {

@@ -2,6 +2,7 @@ mod day1;
 mod day2;
 mod day3;
 mod day4;
+mod day5;
 use std::fs;
 
 
@@ -12,7 +13,7 @@ fn setup(day: i32) -> String {
 }
 
 fn main() {
-    let days: Vec<&dyn Fn(&String) -> ()> = vec![&day1::day1, &day2::day2, &day3::day3, &day4::day4];
+    let days: Vec<&dyn Fn(&String) -> ()> = vec![&day1::day1, &day2::day2, &day3::day3, &day4::day4, &day5::day5];
     let mut day = 1;
     for f in &days {
         println!("\nDay {day} result:\n");
