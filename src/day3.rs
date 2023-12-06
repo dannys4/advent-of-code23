@@ -127,8 +127,7 @@ pub fn day3(contents: &String) {
             if nonneg_nums.len() == 2 {
                 let num1 = *nonneg_nums.get(0).unwrap();
                 let num2 = *nonneg_nums.get(1).unwrap();
-                println!("{num1}, {num2}");
-                ratios += *nonneg_nums.get(0).unwrap() * *nonneg_nums.get(1).unwrap();
+                ratios += num1*num2;
             }
         }
     }
