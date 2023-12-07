@@ -1,7 +1,7 @@
 use core::i64::MAX;
 use std::{cmp::min, time::Instant};
 use regex::Regex;
-use indicatif::ProgressBar;
+use indicatif::{ParallelProgressIterator, ProgressStyle, ProgressBar};
 use rayon::prelude::*;
 
 fn make_map(map_str: &str)->Vec<(i64, i64, i64)> {
@@ -69,20 +69,24 @@ pub fn day5(contents: &String) {
     let re = Regex::new(r"([0-9]+) ([0-9]+)").unwrap();
     let mut min_dest = MAX;
     let mut seed_vec = Vec::new();
+    let mut _total = 0;
     for c in re.captures_iter(seed_str) {
         let (_, [seed_start_str, range_str]) = c.extract();
         let seed_start = seed_start_str.parse::<i64>().unwrap();
         let range = range_str.parse::<i64>().unwrap();
         seed_vec.push((seed_start, range));
+        _total += range as u64;
     }
     
-    let bar = ProgressBar::new(seed_vec.len() as u64);
     let start = Instant::now();
-    for (seed_start, range) in seed_vec {
-        let range_min = (seed_start..(seed_start+range)).into_par_iter()
-            .map( |seed| find_dest(seed, &maps)).min().unwrap();
+    // let bar = ProgressBar::new(_total).with_style(style);
+    for (seed_start, range) in &seed_vec {
+        // let style = ProgressStyle::with_template("[{eta}] {bar:40.cyan/blue}").unwrap();
+        let seed_end = *seed_start + *range;
+        let my_range: Vec<_> = (*seed_start..seed_end).collect();
+        let range_min = my_range.par_iter()//.progress_with_style(style)//progress_with_style(bar)
+            .map( |seed| find_dest(*seed, &maps)).min().unwrap();
         min_dest = min(min_dest, range_min);
-        bar.inc(1);
     }
     let elap = start.elapsed();
 
