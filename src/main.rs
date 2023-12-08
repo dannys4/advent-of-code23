@@ -4,6 +4,7 @@ mod day3;
 mod day4;
 mod day5;
 mod day6;
+mod day7;
 use std::fs;
 
 
@@ -18,7 +19,7 @@ fn main() {
         (&day1::day1, true), (&day2::day2, true),
         (&day3::day3, true), (&day4::day4, true),
         (&day5::day5, false), // Takes awhile
-        (&day6::day6, true)];
+        (&day6::day6, true), (&day7::day7, true)];
     let mut day = 1;
     for (f, show) in &days {
         if *show {
