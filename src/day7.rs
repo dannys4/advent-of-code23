@@ -1,4 +1,4 @@
-use std::{convert::TryInto, cmp::Ordering};
+use std::cmp::Ordering;
 use itertools::Itertools;
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]

@@ -1,7 +1,7 @@
 use itertools::Itertools;
 
 #[derive(PartialEq, Eq, Copy, Clone, Debug)]
-enum Dir {N, E, W, S, NONE, START}
+enum Dir {S, E, N, W, NONE, START}
 
 fn get_dir(end1: Dir, end2: Dir, from: Dir)->Dir {
     if from == end1 {
@@ -36,21 +36,12 @@ fn map_dir(c:char, from:Dir)->Dir {
     }
 }
 
-// TODO
-fn get_inc(dir1: Dir, dir2: Dir, idx: (i64, i64))->i64 {
-    if dir1 == Dir::N && dir2 == Dir::S {
-        return idx.1;
-    }
-    if dir1 == Dir::E && dir2 == Dir::W {
-        return -idx.0;
-    }
-    if dir2 == Dir::N && dir1 == Dir::S {
-        return -idx.1;
-    }
-    if dir2 == Dir::E && dir1 == Dir::W {
-        return idx.0;
-    }
-    return 0;
+fn get_inc(out_dir: Dir, idx: (i64, i64))->i64 {
+    let d = out_dir as i8;
+    let sign = if d<2 {1} else {-1};
+    let ret = if d % 2 == 0 {sign*idx.1} else {sign*idx.0};
+    println!("idx:({},{}), {:?}, ret:{}", idx.0, idx.1, out_dir, ret);
+    return ret;
 }
 
 fn search(map: &Vec<Vec<char>>, start_idx:(i64, i64), start_from: Dir)->(i64,i64) {
@@ -70,7 +61,7 @@ fn search(map: &Vec<Vec<char>>, start_idx:(i64, i64), start_from: Dir)->(i64,i64
         if to == Dir::START {
             return (dist / 2, area_int / 2);
         }
-        area_int += get_inc(from, to, idx);
+        area_int += get_inc(to, idx);
         dist += 1;
         (from, idx) = next_dir_idx(to, idx);
     }
@@ -94,8 +85,9 @@ pub fn day10(contents: &String) {
         let (start_from, start_idx) = next_dir_idx(to, s_idx);
         let (dist, area) = search(&map, start_idx, start_from);
         if dist > 0 {
+            let pick = area - dist + 1;
             println!("Part 1: {dist}");
-            println!("Part 2: {area}");
+            println!("Part 2: {pick}");
             break;
         }
     }

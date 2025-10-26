@@ -1,7 +1,7 @@
 use core::i64::MAX;
 use std::{cmp::min, time::Instant};
 use regex::Regex;
-use indicatif::{ParallelProgressIterator, ProgressStyle, ProgressBar};
+// use indicatif::{ParallelProgressIterator, ProgressStyle, ProgressBar};
 use rayon::prelude::*;
 
 fn make_map(map_str: &str)->Vec<(i64, i64, i64)> {
